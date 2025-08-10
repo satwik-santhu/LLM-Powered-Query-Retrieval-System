@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LLM Query Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    label, input, button {
+      display: block;
+      margin: 15px 0;
+      width: 100%;
+    }
+    #response {
+      white-space: pre-wrap;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>LLM Query System</h2>
+
+  <label for="pdfName">PDF Name:</label>
+  <input type="text" id="pdfName" placeholder="example.pdf" />
+
+  <label for="question">Enter your question:</label>
+  <input type="text" id="question" placeholder="What does the policy cover?" />
+
+  <button onclick="sendQuery()">Ask</button>
+
+  <h3>Response:</h3>
+  <div id="response">Waiting for query...</div>
+
+  <script>
+    async function sendQuery() {
+      const question = document.getElementById("question").value;
+      const pdfName = document.getElementById("pdfName").value;
+      const responseBox = document.getElementById("response");
+
+      const payload = {
+        question: question,
+        pdf_name: pdfName
+      };
+
+      try {
+        const res = await fetch("https://b717765b3207.ngrok-free.app/api/v1/hackrx/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        responseBox.innerText = data.answer || JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseBox.innerText = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
